@@ -5,6 +5,7 @@ using UnityEngine;
 public class PanelOpener : MonoBehaviour
 {
     public LaunchShipPanel launchShipPanel;
+    public HitText hitText;
     void Start()
     {
     }
@@ -15,7 +16,7 @@ public class PanelOpener : MonoBehaviour
         if (Input.GetMouseButtonDown(0)) {
             Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
-            if (hit.collider != null /* && hit.collider.gameObject == this.gameObject */) {
+            if (hit.collider != null && hit.collider.gameObject.GetComponent<Planet>() != null && hit.collider.gameObject.name != "Sun" /* && hit.collider.gameObject == this.gameObject */) {
                 // LaunchShipPanel launchShipPanel = Instantiate(panelPrefab, canvas.transform).GetComponent<LaunchShipPanel>();
                 launchShipPanel.gameObject.SetActive(true);
                 launchShipPanel.OpenPanel(hit.collider.gameObject);

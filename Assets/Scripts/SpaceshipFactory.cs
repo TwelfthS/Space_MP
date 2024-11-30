@@ -6,6 +6,9 @@ public class SpaceshipFactory : MonoBehaviour
 {
     // public List<Spaceship> queue = new List<Spaceship>();
     public GameObject spaceshipPrefab;
+    public GameSystem gameSystem;
+    public DirectionSlider directionSlider;
+    public Movement movement;
 
     // void Update() {
     //     if (Input.GetMouseButtonDown(0)) {
@@ -19,11 +22,15 @@ public class SpaceshipFactory : MonoBehaviour
     // }
 
     public void CreateSpaceship(GameObject parent) {
-        Spaceship spaceship = Instantiate(spaceshipPrefab, parent.transform).GetComponent<Spaceship>();
+        GameObject fullSpaceship = Instantiate(spaceshipPrefab, parent.transform);
+        Spaceship spaceship = fullSpaceship.GetComponent<Spaceship>();
+        spaceship.SetParent(parent);
+        MovingObject spaceshipMoving = fullSpaceship.GetComponent<MovingObject>();
         float speed = 5f;
-        Vector2 randomDirection = Random.insideUnitCircle.normalized;
-        spaceship.initialVelocity = randomDirection * speed;
-        spaceship.StartFlying();
+        Vector2 direction = directionSlider.GetDirection();
+        spaceshipMoving.initialVelocity = direction * speed;
+        spaceshipMoving.SetStartVelocity(gameSystem.timeSpeed);
+        movement.AddMovingObject(spaceshipMoving);
     }
 
 

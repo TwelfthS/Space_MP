@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class CameraScript : MonoBehaviour
 {
+    public RectTransform window;
     private Camera camera;
-    private float zoomSpeed = 5.0f;
+    private float zoomSpeed = 15.0f;
     private float minSize = 2f;
     private float maxSize = 1000f;
     private float panSpeed = 0.05f;
@@ -22,7 +23,7 @@ public class CameraScript : MonoBehaviour
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         camera.orthographicSize -= scroll * zoomSpeed;
         camera.orthographicSize = Mathf.Clamp(camera.orthographicSize, minSize, maxSize);
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0) && !RectTransformUtility.RectangleContainsScreenPoint(window, Input.mousePosition)) {
             isPanning = true;
             lastMousePosition = Input.mousePosition;
         }

@@ -1,18 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GameSystem : MonoBehaviour
 {
 
     public static GameSystem Instance { get; private set; }
+    public Movement movement;
     public float dayCounter = 0;
     public float currentDay = 0;
-    public float counter = 0;
-    // public float timeSpeed = 0.01f;
-    public GameObject earth;
+    public float timeSpeed = 1f; // 10 days per second
+    private float timeSpeedChange = 0;
+    public bool isPaused = false;
+    public TMP_Text dateText;
+    private GameObject earth;
+    private float counter = 0;
     void Awake()
     {
+        Time.fixedDeltaTime = Globals.timeStep;
         if (Instance != null) {
         Debug.LogError("There is more than one instance!");
         return;
@@ -24,25 +30,43 @@ public class GameSystem : MonoBehaviour
     void Start()
     {
         earth = GameObject.Find("Earth");
+        Time.fixedDeltaTime = Globals.timeStep;
     }
     void FixedUpdate()
     {
-        // Time.fixedDeltaTime = timeSpeed;
-        if (dayCounter % 365 == 0 && counter == 0) {
-            Debug.Log("Day " + dayCounter);
-            Debug.Log("Earth coordinates are: x: " + earth.transform.position.x + ", y: " + earth.transform.position.y);
+        if (!isPaused) {
+            if (dayCounter % 365 == 0 && counter == 0) {
+            }
+            counter++;
+            if (counter > 100 / timeSpeed) {
+                dayCounter++;
+                counter = 0;
+                updateDate();
+            }
         }
-        counter++;
-        if (counter == 100) {
-            dayCounter++;
-            // Debug.Log("Day " + dayCounter);
-            counter = 0;
+    }
+
+    public void Pause() {
+        isPaused = !isPaused;
+    }
+
+    public void TimeSpeedUp() {
+        if (timeSpeed < 10) {
+            timeSpeed += 0.5f;
+            timeSpeedChange = timeSpeed / (timeSpeed - 0.5f);
+            movement.AdjustToTimeSpeed(timeSpeedChange);
         }
-        
-        // dayCounter += Time.deltaTime;
-        // if (Mathf.Floor(dayCounter) - 1 == currentDay) {
-        //     currentDay = Mathf.Floor(dayCounter);
-        //     // Debug.Log("Day #" + currentDay);
-        // }
+    }
+
+    public void TimeSpeedDown() {
+        if (timeSpeed > 0.5) {
+            timeSpeed -= 0.5f;
+            timeSpeedChange = timeSpeed / (timeSpeed + 0.5f);
+            movement.AdjustToTimeSpeed(timeSpeedChange);
+        }
+    }
+
+    public void updateDate() {
+        dateText.text = "Day " + dayCounter;
     }
 }
